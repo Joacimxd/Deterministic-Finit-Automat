@@ -209,36 +209,16 @@ int main() {
     MatrixHashes matrix_hashes;
     matrix_hashes = edit_matrix();
 
-    // cout << "Cols:" << endl;
-    // for (const auto &par : matrix_hashes.hashes.cols) {
-    //     cout << par.first << " -> " << par.second << endl;
-    // }
-
-    // cout << "Rows:" << endl;
-    // for (const auto &par : matrix_hashes.hashes.rows) {
-    //     cout << par.first << " -> " << par.second << endl;
-    // }
-
     string init_state; 
     cout << "Introduce the initial state: ";
     getline(cin, init_state);
-    // for(int i = 0; i<init_state.length(); i++){
-    //     cout << init_state[i] << flush;
-    // }
-    // cout << "\n" << flush;
 
     cout << "Introduce the states of acceptance: " << flush;
     vector<string> acc_states = read_vector();
-    // for(string s : acc_states){
-    //     cout << s << "\n" << flush;
-    // }
     
     while(true){
         cout << "Introduce the string: " << flush;
         vector<string> str = read_vector();
-        // for(string s : str){
-        //     cout << s << "\n" << flush;
-        // }
         if(accepts_string(matrix_hashes, str, init_state, acc_states)){
         cout << "It is a valid string" << "\n";
         }else{
