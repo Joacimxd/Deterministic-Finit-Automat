@@ -10,7 +10,7 @@ It’s like a game where you follow arrows between states based on the input sym
 - Node Diagram
 - Table
 
-![diagrams](./images/image copy.png)
+![diagrams](./images/image%20copy.png)
 
 ## C++ Programm
 
