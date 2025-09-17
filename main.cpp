@@ -24,23 +24,20 @@ vector<string> read_vector() {
         return {};
     }
 
-    // Convertir a string y quitar salto de línea final
-    string entrada(buffer);
-    if (!entrada.empty() && entrada.back() == '\n') {
-        entrada.pop_back();
+    string in(buffer);
+    if (!in.empty() && in.back() == '\n') {
+        in.pop_back();
     }
 
-    // Quitar corchetes
-    if (!entrada.empty() && entrada.front() == '[') {
-        entrada.erase(entrada.begin());
+    if (!in.empty() && in.front() == '[') {
+        in.erase(in.begin());
     }
-    if (!entrada.empty() && entrada.back() == ']') {
-        entrada.pop_back();
+    if (!in.empty() && in.back() == ']') {
+        in.pop_back();
     }
 
-    // Separar por comas
     vector<string> resultado;
-    stringstream ss(entrada);
+    stringstream ss(in);
     string item;
     while (getline(ss, item, ',')) {
         resultado.push_back(item);
@@ -213,11 +210,11 @@ int main() {
     cout << "Introduce the initial state: ";
     getline(cin, init_state);
 
-    cout << "Introduce the states of acceptance: " << flush;
+    cout << "Introduce the states of acceptance as [1,2,...,n]: " << flush;
     vector<string> acc_states = read_vector();
     
     while(true){
-        cout << "Introduce the string: " << flush;
+        cout << "Introduce the string as [1,2,...,n]: " << flush;
         vector<string> str = read_vector();
         if(accepts_string(matrix_hashes, str, init_state, acc_states)){
         cout << "It is a valid string" << "\n";
