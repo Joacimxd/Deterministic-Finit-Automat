@@ -2,6 +2,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <fstream>
 #include <termios.h>
 #include <unistd.h>
 #include <unordered_map>
@@ -18,6 +19,8 @@ struct MatrixHashes {
     ColRowHash hashes;
 };
 
+
+
 vector<string> read_vector() {
     char buffer[256];
     if (!fgets(buffer, sizeof(buffer), stdin)) {
@@ -26,13 +29,6 @@ vector<string> read_vector() {
 
     string in(buffer);
     if (!in.empty() && in.back() == '\n') {
-        in.pop_back();
-    }
-
-    if (!in.empty() && in.front() == '[') {
-        in.erase(in.begin());
-    }
-    if (!in.empty() && in.back() == ']') {
         in.pop_back();
     }
 
@@ -74,7 +70,7 @@ bool accepts_string(MatrixHashes matrix_hashes, vector<string> str,
 
     int row_idx = matrix_hashes.hashes.rows[init_state];
     int col_idx;
-    string row_string;
+    string row_string = matrix_hashes.matrix[row_idx][0];
 
     for(string c: str){
         col_idx = matrix_hashes.hashes.cols[c];
@@ -95,6 +91,36 @@ ColRowHash add_to_hash(ColRowHash hashes, int index[2], string element){
         hashes.rows[element] = index[0];
     }
     return hashes;
+}
+
+MatrixHashes readMatrixHashFromFile(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cerr << "Error: Could not open file " << filename << endl;
+        exit(1);
+    }
+
+    int rows, cols;
+    file >> rows >> cols;
+
+    MatrixHashes matrix_hash;
+    matrix_hash.matrix = vector<vector<string>>(rows, vector<string>(cols));
+
+    string curr;
+    int index[2];
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            file >> curr;
+            index[0] = i;
+            index[1] = j;
+            matrix_hash.matrix[i][j] = curr;
+            matrix_hash.hashes = add_to_hash(matrix_hash.hashes, index, curr);
+        }
+    }
+
+    file.close();
+    return matrix_hash;
 }
 
 void delete_from_hash(ColRowHash& hashes, string clave, int index[2]) {
@@ -203,23 +229,36 @@ MatrixHashes edit_matrix(){
 }
 
 int main() {
-    MatrixHashes matrix_hashes;
-    matrix_hashes = edit_matrix();
+    cout << "Read a file or write matrix in editor (r/w): ";
+    char read_write;
+    cin >> read_write;
 
-    string init_state; 
+    MatrixHashes matrix_hashes;
+    if (read_write == 'w') {
+        matrix_hashes = edit_matrix();
+    } else {
+        string file;
+        cout << "Introduce the file name: ";
+        cin >> file;
+        matrix_hashes = readMatrixHashFromFile(file);
+    }
+
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    string init_state;
     cout << "Introduce the initial state: ";
     getline(cin, init_state);
 
     cout << "Introduce the states of acceptance as [1,2,...,n]: " << flush;
     vector<string> acc_states = read_vector();
-    
-    while(true){
+
+    while (true) {
         cout << "Introduce the string as [1,2,...,n]: " << flush;
         vector<string> str = read_vector();
-        if(accepts_string(matrix_hashes, str, init_state, acc_states)){
-        cout << "It is a valid string" << "\n";
-        }else{
-            cout << "It is NOT a valid string" << "\n";
+        if (accepts_string(matrix_hashes, str, init_state, acc_states)) {
+            cout << "It is a valid string\n";
+        } else {
+            cout << "It is NOT a valid string\n";
         }
     }
 }
